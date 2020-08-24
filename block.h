@@ -5,7 +5,7 @@
 
 class Block {
 	public:
-		Block(glm::vec3 pos);
+		Block(glm::vec3 pos, unsigned short int* texIndicies);
 		Block() {};
 		
 		inline glm::vec3 GetPos() { return glm::vec3(position[0], position[1], position[2]); }
@@ -26,6 +26,7 @@ class Block {
 		short int* y = &position[1];
 		short int* z = &position[2];
 		unsigned short int texIndicies[6];
+		std::string block_id;
 		
 		Mesh vData;
 };

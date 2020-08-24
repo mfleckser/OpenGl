@@ -8,6 +8,7 @@
 #include "camera.h"
 #include "player.h"
 #include "block.h"
+#include <X11/Xlib.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <vector>
@@ -26,11 +27,11 @@ void renderBitmapString(float x, float y, void *font,const char *string);
 Mesh mesh;
 Mesh ground;
 Mesh skybox;
-Mesh* testBlock;
 Shader shader;
 Texture crate;
 Texture bricks;
 Texture sky;
+Texture block_textures;
 Block test;
 
 Transform transform;
@@ -40,21 +41,28 @@ int last_time = 0;
 int* last = &last_time;
 int most = 0;
 
+Display* disp = XOpenDisplay(NULL);
+Screen* scrn = DefaultScreenOfDisplay(disp);
+int height = scrn->height;
+int width = scrn->width;
+
+int texWidth = 5;
+int texHeight = 5;
+
 int main(int argc,char** argv)
 {
 	glutInit(&argc, argv);
 	glutInitWindowPosition(100, 100);
-	glutInitWindowSize(1920, 1080);
+	//glutInitWindowSize(width, height);
+	glutInitWindowSize(640, 480);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
 	glutCreateWindow("Open GL");
-	glutFullScreen();
+	//glutFullScreen();
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 	
 	glewExperimental = GL_TRUE;
 	glewInit();
-	
-	//Vertex* vertices, unsigned int numVertices, unsigned int* indices, unsigned int numIndices
 	
 	Vertex vertices[4] = {
 		Vertex(glm::vec3(-10,-2,-10), glm::vec2(0,0)),
@@ -65,19 +73,19 @@ int main(int argc,char** argv)
 	
 	unsigned int indices[6] = { 0, 1, 2, 0, 2, 3 };
 	
-	unsigned short int texIndicies[6] = { 0, 2, 1, 1, 1, 1 };
+	unsigned short int texIndicies[6] = { 0, 0, 0, 0, 0, 0 };
 	
 	mesh.Set("./res/models/box.obj");
 	ground.Set(vertices, 4, indices, 6);
 	skybox.Set("./res/models/skybox.obj");
 	test.Set(glm::vec3(0, 0, 0), texIndicies);
-	testBlock = test.GetMesh(1, 3);
 	
 	shader.Set("./res/shaders/basicShader");
 	
 	crate.Set("./res/images/crate_1.jpg");
 	bricks.Set("./res/images/bricks.jpg");
 	sky.Set("./res/images/skyimg.jpg");
+	block_textures.Set("./res/images/BlockTextures.jpg");
 	
 	player.SetCam(player.GetPos(), 70, (float)glutGet(GLUT_WINDOW_WIDTH)/glutGet(GLUT_WINDOW_HEIGHT), 0.1, 100);
 	
@@ -107,7 +115,11 @@ void drawGround() {
 	ground.Draw();
 }
 
-void drawSky() {
+void drawSky(Camera& playerCam) {
+	Camera temp = Camera(glm::vec3(0, 0, 0), 70, (float)glutGet(GLUT_WINDOW_WIDTH)/glutGet(GLUT_WINDOW_HEIGHT), 0.1, 100);
+	temp.SetForward(playerCam.GetForward());
+	temp.SetUp(playerCam.GetUp());
+	shader.Update(temp);
 	sky.Bind(0, shader.GetProgram(), true);
 	skybox.Draw();
 }
@@ -123,14 +135,10 @@ void render() {
 	
 	//drawCrate();
 	drawGround();
-	Camera temp = Camera(glm::vec3(0, 0, 0), 70, (float)glutGet(GLUT_WINDOW_WIDTH)/glutGet(GLUT_WINDOW_HEIGHT), 0.1, 100);
-	temp.SetForward(playerCam.GetForward());
-	temp.SetUp(playerCam.GetUp());
-	shader.Update(temp);
-	drawSky();
-	sky.Bind(0, shader.GetProgram());
+	drawSky(playerCam);
+	block_textures.Bind(0, shader.GetProgram());
 	shader.Update(playerCam);
-	testBlock->Draw();
+	test.GetMesh(texWidth, texHeight)->Draw();
 	
 	glFinish();
 	glutSwapBuffers();

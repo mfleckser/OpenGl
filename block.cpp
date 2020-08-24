@@ -25,10 +25,13 @@ unsigned int indicies[36] = {
 	20, 21, 22, 20, 22, 23
 };
 
-Block::Block(glm::vec3 pos) {
+Block::Block(glm::vec3 pos, unsigned short int* texIndicies) {
 	this->position[0] = pos.x;
 	this->position[1] = pos.y;
 	this->position[2] = pos.z;
+	for(int i = 0; i < 6; i++) {
+		this->texIndicies[i] = texIndicies[i];
+	}
 }
 
 Mesh* Block::GetMesh(unsigned short int rows, unsigned short int cols) {
@@ -37,9 +40,7 @@ Mesh* Block::GetMesh(unsigned short int rows, unsigned short int cols) {
 	for(unsigned int i = 0; i < 6; i++) {
 		unsigned short int texX, texY;
 		texX = texIndicies[i] % cols;
-		texY = texIndicies[i] / cols;
-		//std::cout << "Current Index: " << texIndicies[i] << std::endl;
-		std::cout << "texX: " << (float)texX/cols << ", texY: " << (float)texY/rows << std::endl;
+		texY = ((rows * cols) - texIndicies[i] - 1) / cols;
 		for(unsigned int j = 0; j < 4; j++) {
 			verticies[j + 4 * i].Set(glm::vec3(*x + offset[i][j][0], *y + offset[i][j][1], *z + offset[i][j][2]), glm::vec2((float)(texX + texOffset[j][0])/cols, (float)(texY + texOffset[j][1])/rows));
 		}
