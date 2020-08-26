@@ -39,7 +39,7 @@ class Mesh {
 		void Set(Vertex* vertices, unsigned int numVertices, unsigned int* indices, unsigned int numIndices);
 		void Set(const std::string& fileName);
 		void Draw();
-			
+		
 		virtual ~Mesh();
 	protected:
 	private:

@@ -26,8 +26,8 @@ void Player::update(int dTime) {
 }
 
 void Player::move(int dTime) {
-	glm::vec3 temp = looking;
+	glm::vec3 temp = glm::normalize(looking);
 	temp.y = 0;
 	pos += vel.z * temp * ((float)dTime / 10) * 0.05f;
-	pos += glm::normalize(glm::cross(temp, camera.GetUp())) * vel.x * ((float)dTime / 10) * 0.05f;
+	pos += glm::normalize(glm::cross(temp, glm::vec3(0, 1, 0))) * vel.x * ((float)dTime / 10) * 0.05f;
 }

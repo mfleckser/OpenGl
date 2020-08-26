@@ -2,6 +2,13 @@
 #include <iostream>
 #include <fstream>
 
+#ifndef WIDTH
+#define WIDTH 640
+#endif
+#ifndef HEIGHT
+#define HEIGHT 480
+#endif
+
 static void CheckShaderError(GLuint shader, GLuint flag, bool isProgram, const std::string& errorMessage);
 static std::string LoadShader(const std::string& fileName);
 static GLuint CreateShader(const std::string& text, GLenum shaderType);
@@ -37,6 +44,12 @@ void Shader::Set(const std::string& fileName) {
 	CheckShaderError(program, GL_VALIDATE_STATUS, true, "Error: Program is invalid: ");
 	
 	uniforms[TRANSFORM_U] = glGetUniformLocation(program, "transform");
+	
+	int widthLoc = glGetUniformLocation(program, "width");
+	int heightLoc = glGetUniformLocation(program, "height");
+	
+	glUniform1i(widthLoc, WIDTH);
+	glUniform1i(heightLoc, HEIGHT);
 }
 
 void Shader::Bind() {

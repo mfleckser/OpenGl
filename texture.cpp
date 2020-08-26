@@ -33,14 +33,13 @@ void Texture::Set(const std::string& fileName) {
 	stbi_image_free(imageData);
 }
 
-void Texture::Bind(unsigned int unit, GLuint program, bool isSky, bool isGround) {
+void Texture::Bind(unsigned int unit, GLuint program, bool isSky) {
 	assert(unit >= 0 && unit <= 31);
 	
 	glActiveTexture(GL_TEXTURE0 + unit);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glUniform1i(GL_TEXTURE0 + unit, texture);
 	glUniform1i(glGetUniformLocation(program, "isSky"), isSky);
-	glUniform1i(glGetUniformLocation(program, "isGround"), isGround);
 }
 
 CubeMap::CubeMap() {}

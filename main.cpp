@@ -7,10 +7,12 @@
 #include "transform.h"
 #include "camera.h"
 #include "player.h"
-#include "block.h"
+//#include "block.h"
+#include "chunk.h"
 #include <X11/Xlib.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <time.h>
 #include <vector>
 #include <iostream>
 
@@ -24,15 +26,13 @@ void keyup(unsigned char key, int mouseX, int mouseY);
 void mouseControl(int x, int y);
 void renderBitmapString(float x, float y, void *font,const char *string);
 
-Mesh mesh;
 Mesh ground;
 Mesh skybox;
 Shader shader;
-Texture crate;
 Texture bricks;
 Texture sky;
 Texture block_textures;
-Block test;
+Chunk test;
 
 Transform transform;
 Player player(glm::vec3(0, 0, -5));
@@ -40,23 +40,32 @@ Player player(glm::vec3(0, 0, -5));
 int last_time = 0;
 int* last = &last_time;
 int most = 0;
+unsigned int queue[20];
+unsigned int average = 0;
+unsigned int step = 0;
+unsigned int sum = 0;
 
 Display* disp = XOpenDisplay(NULL);
 Screen* scrn = DefaultScreenOfDisplay(disp);
 int height = scrn->height;
 int width = scrn->width;
 
+#define WIDTH width
+#define HEIGHT height
+
 int texWidth = 5;
 int texHeight = 5;
+
+
 
 int main(int argc,char** argv)
 {
 	glutInit(&argc, argv);
-	glutInitWindowPosition(100, 100);
+	glutInitWindowPosition(0, 0);
 	//glutInitWindowSize(width, height);
 	glutInitWindowSize(640, 480);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
-	glutCreateWindow("Open GL");
+	glutCreateWindow("OpenGl");
 	//glutFullScreen();
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
@@ -75,14 +84,12 @@ int main(int argc,char** argv)
 	
 	unsigned short int texIndicies[6] = { 0, 0, 0, 0, 0, 0 };
 	
-	mesh.Set("./res/models/box.obj");
 	ground.Set(vertices, 4, indices, 6);
 	skybox.Set("./res/models/skybox.obj");
-	test.Set(glm::vec3(0, 0, 0), texIndicies);
+	test.SetMesh();
 	
 	shader.Set("./res/shaders/basicShader");
 	
-	crate.Set("./res/images/crate_1.jpg");
 	bricks.Set("./res/images/bricks.jpg");
 	sky.Set("./res/images/skyimg.jpg");
 	block_textures.Set("./res/images/BlockTextures.jpg");
@@ -105,13 +112,8 @@ int main(int argc,char** argv)
 	return 0;
 }
 
-void drawCrate() {
-	crate.Bind(0, shader.GetProgram());
-	mesh.Draw();
-}
-
 void drawGround() {
-	bricks.Bind(0, shader.GetProgram(), false, true);
+	bricks.Bind(0, shader.GetProgram());
 	ground.Draw();
 }
 
@@ -133,12 +135,11 @@ void render() {
 	shader.Update(playerCam);
 	shader.UpdateLighting(playerCam);
 	
-	//drawCrate();
-	drawGround();
+	//drawGround();
 	drawSky(playerCam);
 	block_textures.Bind(0, shader.GetProgram());
 	shader.Update(playerCam);
-	test.GetMesh(texWidth, texHeight)->Draw();
+	test.GetMesh()->Draw();
 	
 	glFinish();
 	glutSwapBuffers();
@@ -148,8 +149,22 @@ void update() {
 	int current_time = glutGet(GLUT_ELAPSED_TIME);
 	int deltaTime = current_time - *last;
 	*last = current_time;
-	//std::cout << deltaTime << std::endl;
-	usleep((float)(30-deltaTime)*1000);
+	//std::cout << average << std::endl;
+	
+	if(step >= 20) {
+		step = 0;
+		sum = 0;
+		for(int i = 0; i < 20; i++) {
+			sum += queue[i];
+		}
+		average = sum / 20;
+	} else {
+		queue[step++] = 1000/deltaTime;
+	}
+	
+	//req.tv_nsec = (long)(30-deltaTime) * 1000;
+	//nanosleep(&req, NULL);
+	//usleep((float)(30-deltaTime)*1000);
 	
 	player.update(deltaTime);
 	
@@ -174,10 +189,10 @@ void keydown(unsigned char key, int mouseX, int mouseY) {
 		player.GetVel().x = 1;
 	}
 	if(key == 'q' || key == 'Q') {
-		player.GetPos().y += 0.1;
+		player.GetPos().y += 0.5;
 	}
 	if(key == 'z' || key == 'Z') {
-		player.GetPos().y -= 0.1;
+		player.GetPos().y -= 0.5;
 	}
 	if(key == 27) {
 		exit(0);

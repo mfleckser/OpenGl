@@ -28,12 +28,10 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=5
-FILE_NAME_0=1090;C++;0;EUTF-8;1;1;0;%2Fhome%2Fpi%2FDocuments%2FC%2B%2B%2FOpenGL%2Fblock.cpp;0;4
-FILE_NAME_1=112;C++;0;EUTF-8;1;1;0;%2Fhome%2Fpi%2FDocuments%2FC%2B%2B%2FOpenGL%2Fmesh.h;0;4
-FILE_NAME_2=302;C++;0;EUTF-8;1;1;0;%2Fhome%2Fpi%2FDocuments%2FC%2B%2B%2FOpenGL%2Ftexture.cpp;0;4
-FILE_NAME_3=0;C++;0;EUTF-8;1;1;0;%2Fhome%2Fpi%2FDocuments%2FC%2B%2B%2FOpenGL%2Ftexture.h;0;4
-FILE_NAME_4=283;Forth;0;EUTF-8;1;1;0;%2Fhome%2Fpi%2FDocuments%2FC%2B%2B%2FOpenGL%2Fres%2Fshaders%2FbasicShader.fs;0;4
+current_page=1
+FILE_NAME_0=3197;C++;0;EUTF-8;1;1;0;%2Fhome%2Fpi%2FDocuments%2FC%2B%2B%2FOpenGL%2Fmain.cpp;0;4
+FILE_NAME_1=226;C++;0;EUTF-8;1;1;0;%2Fhome%2Fpi%2FDocuments%2FC%2B%2B%2FOpenGL%2Fchunk.cpp;0;4
+FILE_NAME_2=164;C++;0;EUTF-8;1;1;0;%2Fhome%2Fpi%2FDocuments%2FC%2B%2B%2FOpenGL%2Fchunk.h;0;4
 
 [VTE]
 last_dir=/home/pi
@@ -43,7 +41,7 @@ C++FT_00_LB=_Compile
 C++FT_00_CM=g++ -c -o "%e.o" "%f"
 C++FT_00_WD=
 C++FT_01_LB=_Build
-C++FT_01_CM=g++ -o "%e" *.o -lGL -lGLEW -lglut -lGLU -lX11
+C++FT_01_CM=g++ -o main *.o -lGL -lGLEW -lglut -lGLU -lX11
 C++FT_01_WD=
 C++FT_02_LB=_Lint
 C++FT_02_CM=cppcheck --language=c++ --enable=warning,style --template=gcc "%f"

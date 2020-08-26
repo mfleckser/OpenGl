@@ -10,7 +10,7 @@ class Texture {
 		Texture();
 		
 		void Set(const std::string& fileName);
-		void Bind(unsigned int unit, GLuint program, bool isSky = false, bool isGround = false);
+		void Bind(unsigned int unit, GLuint program, bool isSky = false);
 		
 		virtual ~Texture();
 	protected:
