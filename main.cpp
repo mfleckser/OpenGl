@@ -62,11 +62,11 @@ int main(int argc,char** argv)
 {
 	glutInit(&argc, argv);
 	glutInitWindowPosition(0, 0);
-	//glutInitWindowSize(width, height);
-	glutInitWindowSize(640, 480);
+	glutInitWindowSize(width, height);
+	//glutInitWindowSize(640, 480);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
 	glutCreateWindow("OpenGl");
-	//glutFullScreen();
+	glutFullScreen();
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 	
