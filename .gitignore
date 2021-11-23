@@ -1,0 +1,4 @@
+OpenGl.geany
+*.o
+/res
+!/res/images

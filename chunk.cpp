@@ -1,16 +1,17 @@
 #include "chunk.h"
 
 Chunk::Chunk() {
+	unsigned char block_type;
 	for(int i = 0; i < 16; i++) {
 		for(int j = 0; j < 16; j++) {
 			for(int k = 0; k < 16; k++) {
-				this->blocks[i][j][k] = 1;
+				if(j == 15) block_type = 2;
+				else block_type = 1;
+				this->blocks[i][j][k] = block_type;
 			}
 		}
 	}
-	/*for(int i = 0; i < 16; i++) {
-			this->blocks[i][0][1] = 1;
-	}*/
+
 }
 
 unsigned short int offset[6][4][3] = {
@@ -29,9 +30,10 @@ unsigned short int texOffset[4][2] = {
 	{ 1, 0 }
 };
 
-unsigned short int texIndicies[2][6] = {
+unsigned short int texIndicies[3][6] = {
 	{}, // Air
 	{ 0, 0, 0, 0, 0, 0 }, // Dirt
+	{ 1, 0, 2, 2, 2, 2 }, // Grass
 };
 
 Vertex GetVertex(int i, int j, int k, unsigned short int side, unsigned short int index, unsigned short int texIndex) {
