@@ -24,12 +24,9 @@ void resize(int width, int height);
 void keydown(unsigned char key, int mouseX, int mouseY);
 void keyup(unsigned char key, int mouseX, int mouseY);
 void mouseControl(int x, int y);
-void renderBitmapString(float x, float y, void *font,const char *string);
 
-Mesh ground;
 Mesh skybox;
 Shader shader;
-Texture bricks;
 Texture sky;
 Texture block_textures;
 Chunk test;
@@ -39,11 +36,6 @@ Player player(glm::vec3(0, 0, -5));
 
 int last_time = 0;
 int* last = &last_time;
-int most = 0;
-unsigned int queue[20];
-unsigned int average = 0;
-unsigned int step = 0;
-unsigned int sum = 0;
 
 Display* disp = XOpenDisplay(NULL);
 Screen* scrn = DefaultScreenOfDisplay(disp);
@@ -62,35 +54,22 @@ int main(int argc,char** argv)
 {
 	glutInit(&argc, argv);
 	glutInitWindowPosition(0, 0);
-	glutInitWindowSize(width, height);
-	//glutInitWindowSize(640, 480);
+	//glutInitWindowSize(width, height);
+	glutInitWindowSize(640, 480);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
 	glutCreateWindow("OpenGl");
-	glutFullScreen();
+	//glutFullScreen();
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 	
 	glewExperimental = GL_TRUE;
 	glewInit();
+
 	
-	Vertex vertices[4] = {
-		Vertex(glm::vec3(-10,-2,-10), glm::vec2(0,0)),
-		Vertex(glm::vec3(10,-2,-10), glm::vec2(10,0)),
-		Vertex(glm::vec3(10,-2,10), glm::vec2(10,10)),
-		Vertex(glm::vec3(-10,-2,10), glm::vec2(0,10))
-	};
-	
-	unsigned int indices[6] = { 0, 1, 2, 0, 2, 3 };
-	
-	unsigned short int texIndicies[6] = { 0, 0, 0, 0, 0, 0 };
-	
-	ground.Set(vertices, 4, indices, 6);
 	skybox.Set("./res/models/skybox.obj");
 	test.SetMesh();
 	
 	shader.Set("./res/shaders/basicShader");
-	
-	bricks.Set("./res/images/bricks.jpg");
 	sky.Set("./res/images/skyimg.jpg");
 	block_textures.Set("./res/images/BlockTextures.jpg");
 	
@@ -104,17 +83,10 @@ int main(int argc,char** argv)
 	glutKeyboardUpFunc(keyup);
 	glutPassiveMotionFunc(mouseControl);
 	glutSetCursor(GLUT_CURSOR_NONE);
-	//~ GLfloat c[3] = {0.8,0.8,0.8};
-	//~ glClearColor(c[0], c[1], c[2], 1);
 	
 	glutMainLoop();
 	
 	return 0;
-}
-
-void drawGround() {
-	bricks.Bind(0, shader.GetProgram());
-	ground.Draw();
 }
 
 void drawSky(Camera& playerCam) {
@@ -135,7 +107,6 @@ void render() {
 	shader.Update(playerCam);
 	shader.UpdateLighting(playerCam);
 	
-	//drawGround();
 	drawSky(playerCam);
 	block_textures.Bind(0, shader.GetProgram());
 	shader.Update(playerCam);
@@ -149,22 +120,6 @@ void update() {
 	int current_time = glutGet(GLUT_ELAPSED_TIME);
 	int deltaTime = current_time - *last;
 	*last = current_time;
-	//std::cout << average << std::endl;
-	
-	if(step >= 20) {
-		step = 0;
-		sum = 0;
-		for(int i = 0; i < 20; i++) {
-			sum += queue[i];
-		}
-		average = sum / 20;
-	} else {
-		queue[step++] = 1000/deltaTime;
-	}
-	
-	//req.tv_nsec = (long)(30-deltaTime) * 1000;
-	//nanosleep(&req, NULL);
-	//usleep((float)(30-deltaTime)*1000);
 	
 	player.update(deltaTime);
 	
@@ -188,13 +143,13 @@ void keydown(unsigned char key, int mouseX, int mouseY) {
 	if(key == 'd' || key == 'D') {
 		player.GetVel().x = 1;
 	}
-	if(key == 'q' || key == 'Q') {
+	if(key == ' ') { // space
 		player.GetPos().y += 0.5;
 	}
 	if(key == 'z' || key == 'Z') {
 		player.GetPos().y -= 0.5;
 	}
-	if(key == 27) {
+	if(key == 27) { // escape
 		exit(0);
 	}
 }

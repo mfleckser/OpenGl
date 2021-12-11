@@ -113,6 +113,5 @@ void Chunk::SetMesh() {
 			}
 		}
 	}
-	std::cout << "HI";
 	vData->Set(&verticies[0], verticies.size(), &indicies[0], indicies.size());
 }
